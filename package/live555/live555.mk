@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIVE555_VERSION = 2014.11.01
+LIVE555_VERSION = 2015.03.19
 LIVE555_SOURCE = live.$(LIVE555_VERSION).tar.gz
 LIVE555_SITE = http://www.live555.com/liveMedia/public
 LIVE555_LICENSE = LGPLv2.1+
@@ -38,11 +38,21 @@ define LIVE555_CONFIGURE_CMDS
 	# fails
 	echo 'LIBRARY_LINK = $(LIVE555_LIBRARY_LINK) ' >> $(@D)/config.$(LIVE555_CONFIG_TARGET)
 	(cd $(@D); ./genMakefiles $(LIVE555_CONFIG_TARGET))
+	(cd $(@D); find -name Makefile -exec sed -i 's/\<ln -s /ln -sf /g' "{}" \;)
 endef
 
 define LIVE555_BUILD_CMDS
 	$(MAKE) -C $(@D) all
 endef
+
+LIVE555_SHARED_LIBS-y = \
+	$(patsubst $(@D)/%,%,$(wildcard $(@D)/liveMedia/*.so*))
+LIVE555_SHARED_LIBS-y += \
+	$(patsubst $(@D)/%,%,$(wildcard $(@D)/UsageEnvironment/*.so*))
+LIVE555_SHARED_LIBS-y += \
+	$(patsubst $(@D)/%,%,$(wildcard $(@D)/BasicUsageEnvironment/*.so*))
+LIVE555_SHARED_LIBS-y += \
+	$(patsubst $(@D)/%,%,$(wildcard $(@D)/groupsock/*.so*))
 
 LIVE555_FILES_TO_INSTALL-y =
 LIVE555_FILES_TO_INSTALL-$(BR2_PACKAGE_LIVE555_OPENRTSP) += testProgs/openRTSP
@@ -53,9 +63,19 @@ define LIVE555_INSTALL_STAGING_CMDS
 	$(MAKE) DESTDIR=$(STAGING_DIR) -C $(@D) install
 endef
 
+ifeq ($(BR2_SHARED_LIBS),y)
 define LIVE555_INSTALL_TARGET_CMDS
+	for i in $(LIVE555_SHARED_LIBS-y); do \
+		$(INSTALL) -D -m 0755 $(@D)/$$i $(TARGET_DIR)/usr/lib/`basename $$i` \
+			|| exit 1; \
+	done;
+endef
+endif
+
+define LIVE555_INSTALL_TARGET_CMDS +=
 	for i in $(LIVE555_FILES_TO_INSTALL-y); do \
-		$(INSTALL) -D -m 0755 $(@D)/$$i $(TARGET_DIR)/usr/bin/`basename $$i` || exit 1; \
+		$(INSTALL) -D -m 0755 $(@D)/$$i $(TARGET_DIR)/usr/bin/`basename $$i` \
+			|| exit 1; \
 	done
 endef
 
