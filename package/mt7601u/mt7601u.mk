@@ -28,7 +28,7 @@ endef
 define MT7601U_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 664 $(@D)/src/os/linux/mt7601Usta.ko \
 		$(TARGET_DIR)$(TARGET_INSTALL_MOD_PATH)/mt7601Usta.ko
-	$(TARGET_CROSS)strip -s \
+	$(TARGET_CROSS)strip -g \
 		$(TARGET_DIR)$(TARGET_INSTALL_MOD_PATH)/mt7601Usta.ko
 	$(HOST_DIR)/sbin/depmod -a -b $(TARGET_DIR) $(LINUX_CUSTOM_VERSION)
 	$(INSTALL) -D -m 644 $(@D)/src/RT2870STA.dat \
