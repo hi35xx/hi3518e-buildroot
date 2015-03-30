@@ -1,0 +1,8 @@
+comment "mt7601u needs a Linux kernel to be built"
+	depends on !BR2_LINUX_KERNEL
+
+config BR2_PACKAGE_MT7601U
+	depends on BR2_LINUX_KERNEL
+	bool "mt7601u"
+	help
+	  USB Wireless driver for MediaTek mt7601u chip
