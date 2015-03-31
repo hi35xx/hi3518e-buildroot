@@ -1,0 +1,31 @@
+diff -uNr gsoap-2.8.orig/configure.ac gsoap-2.8/configure.ac
+--- gsoap-2.8.orig/configure.ac	2015-03-31 19:40:27.518423808 +0800
++++ gsoap-2.8/configure.ac	2015-03-31 20:27:33.104580395 +0800
+@@ -12,6 +12,14 @@
+ # Checks for programs.
+ AC_PROG_CXX
+ AC_PROG_CC
++
++CC_FOR_BUILD=${CC_FOR_BUILD-${CC}}
++CPPFLAGS_FOR_BUILD=${CPPFLAGS_FOR_BUILD-${CPPFLAGS}}
++LDFLAGS_FOR_BUILD=${LDFLAGS_FOR_BUILD-${LDFLAGS}}
++AC_SUBST(CC_FOR_BUILD)
++AC_SUBST(CPPFLAGS_FOR_BUILD)
++AC_SUBST(LDFLAGS_FOR_BUILD)
++
+ AM_PROG_CC_C_O
+ AM_PROG_LEX
+ AC_PROG_YACC
+diff -uNr gsoap-2.8.orig/gsoap/src/Makefile.am gsoap-2.8/gsoap/src/Makefile.am
+--- gsoap-2.8.orig/gsoap/src/Makefile.am	2014-12-06 18:30:46.000000000 +0800
++++ gsoap-2.8/gsoap/src/Makefile.am	2015-03-31 20:27:51.654915868 +0800
+@@ -5,6 +5,9 @@
+ ## you have all needed files, that a GNU package needs
+ AUTOMAKE_OPTIONS = foreign 1.4
+ 
++CC = $(CC_FOR_BUILD)
++CPPFLAGS = $(CPPFLAGS_FOR_BUILD)
++LDFLAGS = $(LDFLAGS_FOR_BUILD)
+ 
+ #LIBS=
+ AM_YFLAGS=-d -v
