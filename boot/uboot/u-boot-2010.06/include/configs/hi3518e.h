@@ -74,9 +74,11 @@
 
 #endif /* CONFIG_SPI_FLASH_HISFC350 */
 
-/* no nor flash */
+/*
+ * Command line configuration.
+ */
 #define CONFIG_SYS_NO_FLASH
-/* cp.b */
+#include <config_cmd_default.h>
 #define CONFIG_CMD_MEMORY	/*md mw cp etc.*/
 
 /*-----------------------------------------------------------------------
@@ -130,13 +132,18 @@
 #define CONFIG_BOOTCOMMAND "bootm 0x82000000"
 
 #define CONFIG_BOOTDELAY 1
-#define CONFIG_BOOTARGS	"mem=64M console=ttyAMA0,115200"
+#define CONFIG_BOOTARGS	"mem=40M console=ttyAMA0,115200"
 #define CONFIG_NETMASK	255.255.255.0		/* talk on MY local net */
 #define CONFIG_IPADDR	192.168.1.10		/* default static IP */
 #define CONFIG_SERVERIP	192.168.1.2		/* default tftp server ip */
 #define CONFIG_ETHADDR	00:00:23:34:45:66
 #define CONFIG_BOOTFILE	"uImage"		/* file to load */
 #define CONFIG_BAUDRATE	115200
+
+#define CONFIG_EXTRA_ENV_SETTINGS \
+	"mdio_intf=rmii\0" \
+	"phyaddru=0\0" \
+	"phyaddrd=1\0"
 
 /*-----------------------------------------------------------------------
  * for bootm linux
