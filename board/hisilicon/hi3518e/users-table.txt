@@ -1,0 +1,2 @@
+#username uid	group	gid	password home	shell	groups	comment
+admin	1000	admin	1000	*	-	/bin/sh	wheel	Administrator
