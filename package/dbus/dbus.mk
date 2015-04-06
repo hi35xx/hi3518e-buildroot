@@ -22,6 +22,7 @@ endef
 DBUS_DEPENDENCIES = host-pkgconf expat
 
 DBUS_CONF_ENV = ac_cv_have_abstract_sockets=yes
+DBUS_CONF_ENV += with_init_scripts=none
 DBUS_CONF_OPTS = \
 	--with-dbus-user=dbus \
 	--disable-tests \
