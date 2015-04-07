@@ -462,6 +462,7 @@ menu "Lua libraries/modules"
 	source "package/orbit/Config.in"
 	source "package/rings/Config.in"
 	source "package/wsapi/Config.in"
+	source "package/wsapi-fcgi/Config.in"
 	source "package/xavante/Config.in"
 endmenu
 endif
