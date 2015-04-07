@@ -47,7 +47,7 @@ NGINX_CONF_ENV += \
 
 # prefix: nginx root configuration location
 NGINX_CONF_OPTS += \
-	--prefix=/usr \
+	--prefix=/usr/share/nginx \
 	--conf-path=/etc/nginx/nginx.conf \
 	--sbin-path=/usr/sbin/nginx \
 	--pid-path=/var/run/nginx.pid \
@@ -223,9 +223,22 @@ endef
 define NGINX_INSTALL_TARGET_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) DESTDIR=$(TARGET_DIR) install
 	-$(RM) $(TARGET_DIR)/usr/bin/nginx.old
+	$(INSTALL) -p -d -m 0755 $(TARGET_DIR)/etc/nginx/conf.d
+	$(INSTALL) -m 644 -p package/nginx/nginx.conf \
+		$(TARGET_DIR)/etc/nginx/nginx.conf
+	$(INSTALL) -m 644 -p package/nginx/nginx.vh.default.conf \
+		$(TARGET_DIR)/etc/nginx/conf.d/default.conf
+	$(INSTALL) -m 644 -p package/nginx/nginx.vh.example_ssl.conf \
+		$(TARGET_DIR)/etc/nginx/conf.d/example_ssl.conf
+
+endef
+
+ifeq ($(BR2_PACKAGE_LOGROTATE),y)
+define NGINX_INSTALL_TARGET_CMDS += 
 	$(INSTALL) -D -m 0664 package/nginx/nginx.logrotate \
 		$(TARGET_DIR)/etc/logrotate.d/nginx
 endef
+endif
 
 define NGINX_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 0644 package/nginx/nginx.service \
