@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NGINX_VERSION = 1.6.2
+NGINX_VERSION = 1.6.3
 NGINX_SITE = http://nginx.org/download
 NGINX_LICENSE = BSD-2c
 NGINX_LICENSE_FILES = LICENSE
@@ -222,7 +222,7 @@ endef
 
 define NGINX_INSTALL_TARGET_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) DESTDIR=$(TARGET_DIR) install
-	-$(RM) $(TARGET_DIR)/usr/bin/nginx.old
+	-$(RM) $(TARGET_DIR)/usr/sbin/nginx.old
 	$(INSTALL) -p -d -m 0755 $(TARGET_DIR)/etc/nginx/conf.d
 	$(INSTALL) -m 644 -p package/nginx/nginx.conf \
 		$(TARGET_DIR)/etc/nginx/nginx.conf
