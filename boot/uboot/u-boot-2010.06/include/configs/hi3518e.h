@@ -109,15 +109,11 @@
  * environment && bd_info && global_data  configure
  * used in file
 -----------------------------------------------------------------------*/
-#include "../../product/env_setup.h"
-
-#define CFG_ENV_OFFSET			CFG_ENV_ADDR
 
 /* env in flash instead of CFG_ENV_IS_NOWHERE */
 #define CONFIG_ENV_IS_IN_SPI_FLASH	1
 
 #define CONFIG_ENV_OFFSET		0x80000 /* environment starts here */
-#define CONFIG_ENV_SPI_ADDR		(CONFIG_ENV_OFFSET)
 #define CONFIG_CMD_SAVEENV
 
 #define CONFIG_STACKSIZE		(128 * 1024)
@@ -129,21 +125,56 @@
 /*-----------------------------------------------------------------------
  *  Environment   Configuration
  ------------------------------------------------------------------------*/
-#define CONFIG_BOOTCOMMAND "bootm 0x82000000"
-
 #define CONFIG_BOOTDELAY 1
-#define CONFIG_BOOTARGS	"mem=40M console=ttyAMA0,115200"
-#define CONFIG_NETMASK	255.255.255.0		/* talk on MY local net */
-#define CONFIG_IPADDR	192.168.1.10		/* default static IP */
-#define CONFIG_SERVERIP	192.168.1.2		/* default tftp server ip */
-#define CONFIG_ETHADDR	00:00:23:34:45:66
-#define CONFIG_BOOTFILE	"uImage"		/* file to load */
 #define CONFIG_BAUDRATE	115200
+#define CONFIG_BOOTARGS	"mem=40M console=ttyAMA0,115200"
+#define CONFIG_HOSTNAME	ipcam
+#define CONFIG_NETMASK	255.255.255.0		/* talk on MY local net */
+#define CONFIG_IPADDR	192.168.10.15		/* default static IP */
+#define CONFIG_SERVERIP	192.168.10.2		/* default tftp server ip */
+#define CONFIG_GATEWAYIP 192.168.10.1		/* default gateway ip */
+#define CONFIG_ETHADDR	00:00:23:34:45:66
+#define CONFIG_BOOTFILE	"hi3518e/uImage"	/* file to load */
+#define CONFIG_ROOTPATH /tftpboot/hi3518e/rootfs
 
-#define CONFIG_EXTRA_ENV_SETTINGS \
+#define CONFIG_LOADADDR	0x82000000
+
+#define HISFV300_ENV_SETTINGS \
 	"mdio_intf=rmii\0" \
 	"phyaddru=0\0" \
 	"phyaddrd=1\0"
+
+#define MTDPARTS_ENV_SETTINGS \
+	"mtdparts=hi_sfc:512k(boot),256k(env1)," \
+		"256k(env2),3m(kernel),6m(rootfs)," \
+		"3m(www),-(apps)\0"
+
+#define CONFIG_EXTRA_ENV_SETTINGS \
+	HISFV300_ENV_SETTINGS \
+	MTDPARTS_ENV_SETTINGS \
+	"console=ttyAMA0,115200n8\0" \
+	"commonargs=" \
+		"setenv bootargs mem=40M console=${console} " \
+		"mtdparts=${mtdparts}\0" \
+	"nfsopts=hard,tcp,rsize=65536,wsize=65536,vers=3\0" \
+	"nfsargs=setenv bootargs ${bootargs} " \
+		"root=/dev/nfs rw " \
+		"nfsroot=${serverip}:${rootpath},${nfsopts}\0" \
+	"addip=setenv bootargs ${bootargs} " \
+		"ip=${ipaddr}:${serverip}:${gatewayip}:${netmask}" \
+		":${hostname}:eth0:off\0" \
+	"nfsboot=tftp ${loadaddr} ${bootfile} " \
+		"&& run commonargs && run nfsargs && run addip " \
+		"&& bootm\0" \
+	"bootdevice=/dev/mtdblock4\0" \
+	"rootfstype=squashfs,jffs2\0" \
+	"flashargs=setenv bootargs ${bootargs} " \
+		"root=${bootdevice} rootfstype=${rootfstype}\0" \
+	"flashboot=sf probe 0 && sf read ${loadaddr} 0x100000 0x300000 " \
+		"&& run commonargs && run flashargs && run addip " \
+		"&& bootm\0"
+
+#define CONFIG_BOOTCOMMAND "run flashboot"
 
 /*-----------------------------------------------------------------------
  * for bootm linux
