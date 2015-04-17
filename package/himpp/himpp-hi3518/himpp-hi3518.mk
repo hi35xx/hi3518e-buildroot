@@ -1,15 +1,16 @@
 ################################################################################
 #
-# hi3518e-mpp2
+# hi3518-mpp2
 #
 ################################################################################
 
 HIMPP_HI3518_VERSION = 1.0.9.0
-HIMPP_HI3518_TARBALL = package/himpp/himpp-hi3518e/mpp2.tgz
+HIMPP_HI3518_TARBALL = package/himpp/himpp-hi3518/mpp2.tgz
 HIMPP_HI3518_SITE_METHOD = file
 HIMPP_HI3518_SITE = $(patsubst %/,%,$(dir $(HIMPP_HI3518_TARBALL)))
 HIMPP_HI3518_SOURCE = $(notdir $(HIMPP_HI3518_TARBALL))
 HIMPP_HI3518_INSTALL_STAGING = YES
+HIMPP_HI3518_DEPENDENCIES = linux
 
 SENSOR_TYPE = $(call qstrip,$(BR2_PACKAGE_HIMPP_SNS_TYPE))
 
