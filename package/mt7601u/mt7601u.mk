@@ -1,15 +1,12 @@
 ################################################################################
 #
-# linux-fusion
+# mt7601u
 #
 ################################################################################
 
 MT7601U_VERSION = 85514f099415fbcb40c2bde3eb928057e5a64fe1
 MT7601U_SITE = $(call github,hi35xx,mt7601,$(MT7601U_VERSION))
-#MT7601U_INSTALL_STAGING = YES
 MT7601U_DEPENDENCIES = linux
-MT7601U_LICENSE = GPLv2+
-MT7601U_LICENSE_FILES = LICENSE
 
 MT7601U_MAKE_OPTS = PLATFORM=SMDK
 MT7601U_MAKE_OPTS += LINUX_SRC=$(LINUX_DIR)
