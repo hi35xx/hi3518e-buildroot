@@ -1,0 +1,35 @@
+#!/bin/sh
+#
+# Start/stop wsapi-fcgi
+#
+
+PIDFILE=/var/run/wsapi-fcgi.pid
+SOCKFILE=/var/run/wsapi-fcgi.sock
+RETVAL=0
+
+case "$1" in
+    start)
+        echo -n "Starting wsapi-fcgi..."
+        spawn-fcgi -F 1 -s $SOCKFILE -P $PIDFILE \
+            -U www-data -- \
+            /usr/bin/wsapi.fcgi > /dev/null 2>&1
+        echo "done"
+        ;;
+    stop)
+        echo -n "Stopping wsapi-fcgi..."
+        kill `cat $PIDFILE` > /dev/null 2>&1
+        RETVAL=$?
+        echo "done"
+        if [ $RETVAL -eq 0 ]; then
+            rm -f $SOCKFILE
+            rm -f $PIDFILE
+        fi
+        ;;
+    restart|reload)
+        "$0" stop
+        "$0" start
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+esac
