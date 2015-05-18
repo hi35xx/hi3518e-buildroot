@@ -5,7 +5,7 @@
 ################################################################################
 
 HIMPP_HI3518_VERSION = 1.0.9.0
-HIMPP_HI3518_TARBALL = package/himpp/himpp-hi3518/mpp2.tgz
+HIMPP_HI3518_TARBALL = $(TOPDIR)/package/himpp/himpp-hi3518/mpp2.tgz
 HIMPP_HI3518_SITE_METHOD = file
 HIMPP_HI3518_SITE = $(patsubst %/,%,$(dir $(HIMPP_HI3518_TARBALL)))
 HIMPP_HI3518_SOURCE = $(notdir $(HIMPP_HI3518_TARBALL))
