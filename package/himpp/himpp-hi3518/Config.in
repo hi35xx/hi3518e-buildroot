@@ -1,5 +1,20 @@
 comment "Options for hi3518 mpp2"
 
+config BR2_PACKAGE_HIMPP_PREFIX
+	string "prefix"
+	default "/opt/himpp2"
+	help
+	  Prefix to install himpp2 on the target file system.
+
+menuconfig BR2_PACKAGE_HIMPP_SAMPLES
+	bool "build mpp2 samples"
+	default n
+	depends on BR2_PACKAGE_HIMPP_HI3518
+	help
+	  Build samples for HiMPP2 for HI3518
+
+if BR2_PACKAGE_HIMPP_SAMPLES
+
 choice
 	bool "sensor type"
 	default BR2_PACKAGE_HIMPP_SNS_OMNI_OV9712
@@ -94,16 +109,6 @@ config BR2_PACKAGE_HIMPP_SNS_TYPE
 	default SONY_IMX122_DC_1080P_30FPS if BR2_PACKAGE_HIMPP_SNS_SONY_IMX122
 	default SONY_IMX138_DC_720P_30FPS if BR2_PACKAGE_HIMPP_SNS_SONY_IMX138
 	default SONY_IMX236_DC_1080P_30FPS if BR2_PACKAGE_HIMPP_SNS_SONY_IMX236
-
-
-menuconfig BR2_PACKAGE_HIMPP_SAMPLES
-	bool "build mpp2 samples"
-	default n
-	depends on BR2_PACKAGE_HIMPP_HI3518
-	help
-	  Build samples for HiMPP2 for HI3518
-
-if BR2_PACKAGE_HIMPP_SAMPLES
 
 config BR2_PACKAGE_HIMPP_SAMPLES_AUDIO
 	bool "audio"

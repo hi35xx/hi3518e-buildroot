@@ -23,24 +23,31 @@ HIMPP_HI3518_MAKE_OPTS += LINUX_ROOT=$(LINUX_DIR)
 HIMPP_HI3518_MAKE_OPTS += MPP_PATH=$(@D)/mpp2
 HIMPP_HI3518_MAKE_OPTS += SENSOR_TYPE=$(SENSOR_TYPE)
 
-define build_sample_cmds
+define build_mpp_sample
 	cd $(@D)/mpp2/sample/$(1); $(MAKE1) $(HIMPP_HI3518_MAKE_OPTS);
 endef
 
+define HIMPP_HI3518_BUILD_CMDS
+	cd $(@D)/mpp2/lib; \
+	for f in *.a; do \
+	  $(TARGET_CC) -shared -fPIC $$f -o $${f%.a}.so; \
+	done;
+endef
+
 ifeq ($(BR2_PACKAGE_HIMPP_SAMPLES_AUDIO),y)
-	HIMPP_HI3518_BUILD_CMDS += $(call build_sample_cmds,audio)
+	HIMPP_HI3518_BUILD_CMDS += $(call build_mpp_sample,audio)
 	SAMPLES_TO_INSTALL += audio/sample_audio
 endif
 ifeq ($(BR2_PACKAGE_HIMPP_SAMPLES_HIFB),y)
-	HIMPP_HI3518_BUILD_CMDS += $(call build_sample_cmds,hifb)
+	HIMPP_HI3518_BUILD_CMDS += $(call build_mpp_sample,hifb)
 	SAMPLES_TO_INSTALL += hifb/sample_hifb
 endif
 ifeq ($(BR2_PACKAGE_HIMPP_SAMPLES_IQ),y)
-	HIMPP_HI3518_BUILD_CMDS += $(call build_sample_cmds,iq)
+	HIMPP_HI3518_BUILD_CMDS += $(call build_mpp_sample,iq)
 	SAMPLES_TO_INSTALL += iq/sample_iq
 endif
 ifeq ($(BR2_PACKAGE_HIMPP_SAMPLES_IVE),y)
-	HIMPP_HI3518_BUILD_CMDS += $(call build_sample_cmds,ive)
+	HIMPP_HI3518_BUILD_CMDS += $(call build_mpp_sample,ive)
 	SAMPLES_TO_INSTALL += ive/sample_ive_canny
 	SAMPLES_TO_INSTALL += ive/sample_ive_detect
 	SAMPLES_TO_INSTALL += ive/sample_ive_FPN
@@ -48,28 +55,28 @@ ifeq ($(BR2_PACKAGE_HIMPP_SAMPLES_IVE),y)
 	SAMPLES_TO_INSTALL += ive/sample_ive_test_memory
 endif
 ifeq ($(BR2_PACKAGE_HIMPP_SAMPLES_REGION),y)
-	HIMPP_HI3518_BUILD_CMDS += $(call build_sample_cmds,region)
+	HIMPP_HI3518_BUILD_CMDS += $(call build_mpp_sample,region)
 	SAMPLES_TO_INSTALL += region/sample_region
 endif
 ifeq ($(BR2_PACKAGE_HIMPP_SAMPLES_TDE),y)
-	HIMPP_HI3518_BUILD_CMDS += $(call build_sample_cmds,tde)
+	HIMPP_HI3518_BUILD_CMDS += $(call build_mpp_sample,tde)
 	SAMPLES_TO_INSTALL += tde/sample_tde
 endif
 ifeq ($(BR2_PACKAGE_HIMPP_SAMPLES_VDA),y)
-	HIMPP_HI3518_BUILD_CMDS += $(call build_sample_cmds,vda)
+	HIMPP_HI3518_BUILD_CMDS += $(call build_mpp_sample,vda)
 	SAMPLES_TO_INSTALL += vda/sample_vda
 endif
 ifeq ($(BR2_PACKAGE_HIMPP_SAMPLES_VENC),y)
-	HIMPP_HI3518_BUILD_CMDS += $(call build_sample_cmds,venc)
+	HIMPP_HI3518_BUILD_CMDS += $(call build_mpp_sample,venc)
 	SAMPLES_TO_INSTALL += venc/sample_venc
 endif
 ifeq ($(BR2_PACKAGE_HIMPP_SAMPLES_VIO),y)
-	HIMPP_HI3518_BUILD_CMDS += $(call build_sample_cmds,vio)
+	HIMPP_HI3518_BUILD_CMDS += $(call build_mpp_sample,vio)
 	SAMPLES_TO_INSTALL += vio/sample_vio
 endif
 
 
-HIMPP_PREFIX = /opt/himpp2
+HIMPP_PREFIX = $(call qstrip,$(BR2_PACKAGE_HIMPP_PREFIX))
 
 define HIMPP_HI3518_INSTALL_STAGING_CMDS
 	mkdir -p $(STAGING_DIR)$(HIMPP_PREFIX)
@@ -82,6 +89,7 @@ endef
 DRVS_TO_INSTALL = $(shell cd $(@D)/mpp2 && find ko/ -name *.ko)
 
 SCRS_TO_INSTALL = $(shell cd $(@D)/mpp2 && find ko/ -name *.sh)
+SCRS_TO_INSTALL += ko/load3518 ko/load3518e
 
 LIBS_TO_INSTALL = $(shell cd $(@D)/mpp2 && find lib/ -name *.so*)
 
@@ -98,8 +106,6 @@ define HIMPP_HI3518_INSTALL_TARGET_CMDS
 	  sed -r -i -e "s/himm([[:space:]]*[^[:space:]]*)/devmem \1 32/" \
 	      $(TARGET_DIR)$(HIMPP_PREFIX)/$$f; \
 	done
-	$(INSTALL) -m 755 -D package/himpp/himpp-hi3518/load3518e.sh \
-	           $(TARGET_DIR)$(HIMPP_PREFIX)/ko
 
 	# install libraries
 	$(RM) -r $(TARGET_DIR)$(HIMPP_PREFIX)/lib
