@@ -1,0 +1,1 @@
+admin	1000	admin	1000	*	-	/bin/sh	wheel	Administrator
